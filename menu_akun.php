@@ -1,6 +1,9 @@
 <?php require_once __DIR__ . '/sesi.php'; ?>
 
 <?php if (!empty($_SESSION['id_user'])): ?>
+<?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+    <a href="admin.php">Dashboard Admin</a>
+<?php endif; ?>
     <span class="sapaan-akun">
         Hai,
         <?= htmlspecialchars(
