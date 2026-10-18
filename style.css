@@ -426,6 +426,7 @@ select:focus-visible {
         transition: none !important;
     }
 }
+
 /* Logo banner berbentuk lingkaran */
 .hero-logo {
     width: min(100%, 390px);
@@ -452,6 +453,7 @@ select:focus-visible {
         padding: 0;
     }
 }
+
 .hero-logo {
     width: min(100%, 390px);
     aspect-ratio: 1 / 1;
@@ -479,6 +481,7 @@ select:focus-visible {
         padding: 0;
     }
 }
+
 /* Halaman detail produk */
 .detail-page {
     padding-top: 30px;
@@ -617,6 +620,7 @@ select:focus-visible {
         min-height: 300px;
     }
 }
+
 /* Halaman katalog */
 .catalog-banner {
     padding: 55px 0;
@@ -650,15 +654,14 @@ select:focus-visible {
     color: var(--pink-dark);
     font-weight: bold;
 }
+
 /* Background butik pada banner beranda */
 .hero {
     background-image:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             rgba(255, 245, 248, 0.94) 0%,
             rgba(255, 245, 248, 0.78) 35%,
-            rgba(255, 245, 248, 0.08) 70%
-        ),
+            rgba(255, 245, 248, 0.08) 70%),
         url("assets/images/background_butik.png");
 
     background-size: cover;
@@ -676,7 +679,7 @@ select:focus-visible {
     display: none;
 }
 
-.hero-inner > div:first-child {
+.hero-inner>div:first-child {
     max-width: 570px;
 }
 
@@ -690,17 +693,16 @@ select:focus-visible {
         padding: 45px 0;
     }
 }
+
 /* Background butik pada banner katalog */
 .catalog-banner {
     position: relative;
     padding: 85px 0;
     background-image:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             rgba(255, 245, 248, 0.96) 0%,
             rgba(255, 245, 248, 0.82) 35%,
-            rgba(255, 245, 248, 0.08) 75%
-        ),
+            rgba(255, 245, 248, 0.08) 75%),
         url("assets/images/background_butik.png");
 
     background-size: cover;
@@ -731,6 +733,7 @@ select:focus-visible {
         font-size: 38px;
     }
 }
+
 /* Font utama: menu dan informasi produk */
 body,
 button,
@@ -803,6 +806,7 @@ select {
 .nav {
     font-size: 13px;
 }
+
 /* Aksen huruf sambung */
 .hero h1 em {
     display: inline-block;
@@ -842,11 +846,13 @@ select {
 }
 
 @media (max-width: 700px) {
+
     .hero .eyebrow,
     .catalog-banner .eyebrow {
         font-size: 24px;
     }
 }
+
 /* Khusus banner beranda */
 .hero .eyebrow {
     font-family: "Poppins", Arial, sans-serif;
@@ -892,6 +898,7 @@ select {
         font-size: clamp(48px, 10vw, 64px);
     }
 }
+
 /* Alamat toko offline */
 .alamat-toko {
     max-width: 580px;
@@ -925,4 +932,38 @@ select {
     color: var(--pink-dark);
     text-decoration: underline;
     text-underline-offset: 4px;
+}
+
+/* Menu akun customer */
+.sapaan-akun {
+    max-width: 180px;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    color: var(--pink-dark);
+}
+
+.form-keluar {
+    display: inline-flex;
+    margin: 0;
+}
+
+.form-keluar button {
+    padding: 8px 16px;
+    border: 1px solid var(--pink-dark);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--pink-dark);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.form-keluar button:hover {
+    background: var(--pink-dark);
+    color: #fff;
+}
+
+.site-header .nav {
+    flex-wrap: wrap;
+    align-items: center;
 }

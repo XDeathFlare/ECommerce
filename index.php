@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/sesi.php';
 require __DIR__ . "/koneksi.php";
 
 function aman($nilai)
@@ -85,8 +86,10 @@ $jumlahProduk = (int) $koneksi->query("
 
             <nav class="nav" aria-label="Navigasi utama">
                 <a href="index.php">Beranda</a>
-              <a href="katalog.php">Katalog</a>
+                <a href="katalog.php">Katalog</a>
                 <a href="#tentang">Tentang Kami</a>
+
+                <?php require __DIR__ . '/menu_akun.php'; ?>
             </nav>
         </div>
     </header>

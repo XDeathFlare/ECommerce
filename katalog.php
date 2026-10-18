@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/sesi.php';
 require __DIR__ . "/koneksi.php";
 
 function aman($nilai)
@@ -106,6 +107,8 @@ $produk = $stmt->get_result();
                 <a href="index.php">Beranda</a>
                 <a href="katalog.php" aria-current="page">Katalog</a>
                 <a href="index.php#tentang">Tentang Kami</a>
+
+                <?php require __DIR__ . '/menu_akun.php'; ?>
             </nav>
         </div>
     </header>
