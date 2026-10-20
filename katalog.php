@@ -108,6 +108,12 @@ $produk = $stmt->get_result();
                 <a href="katalog.php" aria-current="page">Katalog</a>
                 <a href="index.php#tentang">Tentang Kami</a>
 
+                <?php if (
+                !empty($_SESSION['id_user'])
+                && ($_SESSION['role'] ?? '') === 'customer'
+            ): ?>
+                <a href="keranjang.php">Keranjang</a>
+                <?php endif; ?>
                 <?php require __DIR__ . '/menu_akun.php'; ?>
             </nav>
         </div>
