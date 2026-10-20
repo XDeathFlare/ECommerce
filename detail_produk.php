@@ -98,6 +98,7 @@ unset($_SESSION['pesan_keranjang']);
                 !empty($_SESSION['id_user'])
                 && ($_SESSION['role'] ?? '') === 'customer'
             ): ?>
+                <a href="favorit.php">Favorit</a>
                 <a href="keranjang.php">Keranjang</a>
                 <?php endif; ?>
                 <?php require __DIR__ . '/menu_akun.php'; ?>

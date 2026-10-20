@@ -250,6 +250,7 @@ foreach ($isiKeranjang as $item) {
             <nav class="nav" aria-label="Navigasi utama">
                 <a href="index.php">Beranda</a>
                 <a href="katalog.php">Katalog</a>
+                <a href="favorit.php">Favorit</a>
                 <a href="keranjang.php" aria-current="page">Keranjang</a>
                 <?php require __DIR__ . '/menu_akun.php'; ?>
             </nav>
