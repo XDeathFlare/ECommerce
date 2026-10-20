@@ -71,6 +71,34 @@ $kataKunci = "%" . $pencarian . "%";
 $stmt->bind_param("iis", $kategori, $kategori, $kataKunci);
 $stmt->execute();
 $produk = $stmt->get_result();
+
+if (empty($_SESSION['csrf_favorit'])) {
+    $_SESSION['csrf_favorit'] = bin2hex(random_bytes(32));
+}
+
+$customerLogin = !empty($_SESSION['id_user'])
+    && ($_SESSION['role'] ?? '') === 'customer';
+
+$daftarFavorit = [];
+
+if ($customerLogin) {
+    $idUserFavorit = (int) $_SESSION['id_user'];
+
+    $stmtFavorit = $koneksi->prepare(
+        "SELECT id_barang FROM favorit WHERE id_user = ?"
+    );
+    $stmtFavorit->bind_param('i', $idUserFavorit);
+    $stmtFavorit->execute();
+
+    $hasilFavorit = $stmtFavorit->get_result();
+
+    while ($itemFavorit = $hasilFavorit->fetch_assoc()) {
+        $daftarFavorit[(int) $itemFavorit['id_barang']] = true;
+    }
+}
+
+$pesanFavorit = $_SESSION['pesan_favorit'] ?? '';
+unset($_SESSION['pesan_favorit']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -112,6 +140,7 @@ $produk = $stmt->get_result();
                 !empty($_SESSION['id_user'])
                 && ($_SESSION['role'] ?? '') === 'customer'
             ): ?>
+                <a href="favorit.php">Favorit</a>
                 <a href="keranjang.php">Keranjang</a>
                 <?php endif; ?>
                 <?php require __DIR__ . '/menu_akun.php'; ?>
@@ -215,7 +244,12 @@ $produk = $stmt->get_result();
                     </a>
                 <?php endif; ?>
             </form>
-
+            
+            <?php if ($pesanFavorit !== ''): ?>
+                <p class="favorit-notifikasi" role="status">
+                    <?= aman($pesanFavorit) ?>
+                </p>
+            <?php endif; ?>
             <div class="product-grid">
                 <?php if ($produk->num_rows === 0): ?>
                     <div class="empty-state">
@@ -239,6 +273,65 @@ $produk = $stmt->get_result();
                     ?>
 
                     <article class="product-card">
+                        <?php
+                        $sudahFavorit = isset(
+                            $daftarFavorit[(int) $barang['id_barang']]
+                        );
+                        ?>
+
+                        <?php if ($customerLogin): ?>
+                            <form
+                                class="favorit-form"
+                                action="proses_favorit.php"
+                                method="post"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_favorit"
+                                    value="<?= aman($_SESSION['csrf_favorit']) ?>"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="id_barang"
+                                    value="<?= (int) $barang['id_barang'] ?>"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="aksi"
+                                    value="<?= $sudahFavorit ? 'hapus' : 'tambah' ?>"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="favorit-tombol <?= $sudahFavorit ? 'tersimpan' : '' ?>"
+                                    aria-label="<?= aman(
+                                        ($sudahFavorit
+                                            ? 'Hapus dari favorit: '
+                                            : 'Tambahkan ke favorit: ')
+                                        . $barang['nama_barang']
+                                    ) ?>"
+                                    aria-pressed="<?= $sudahFavorit ? 'true' : 'false' ?>"
+                                    title="<?= $sudahFavorit
+                                        ? 'Hapus dari favorit'
+                                        : 'Tambahkan ke favorit' ?>"
+                                >
+                                    <span aria-hidden="true">
+                                        <?= $sudahFavorit ? '&#9829;' : '&#9825;' ?>
+                                    </span>
+                                </button>
+                            </form>
+                        <?php elseif (empty($_SESSION['id_user'])): ?>
+                            <a
+                                class="favorit-tombol favorit-login"
+                                href="login.php"
+                                aria-label="Masuk untuk menyimpan produk ke favorit"
+                                title="Masuk untuk menyimpan favorit"
+                            >
+                                <span aria-hidden="true">&#9825;</span>
+                            </a>
+                        <?php endif; ?>
                         <a
                             class="product-image <?= !$adaFoto
                                 ? "placeholder" : "" ?>"

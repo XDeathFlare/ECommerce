@@ -1020,3 +1020,64 @@ select {
         max-width: 100%;
     }
 }
+
+/* Tombol favorit pada kartu produk */
+.product-card {
+    position: relative;
+}
+
+.favorit-form,
+.favorit-login {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+.favorit-form {
+    margin: 0;
+}
+
+.favorit-tombol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid #f1c9d7;
+    border-radius: 50%;
+    background: #fff;
+    color: #ae355d;
+    font-size: 29px;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(83, 30, 49, 0.12);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.favorit-tombol:hover {
+    background: #fff0f5;
+    transform: scale(1.08);
+}
+
+.favorit-tombol.tersimpan {
+    background: #ffe4ee;
+    color: #c62f65;
+    border-color: #eaa5be;
+}
+
+.favorit-tombol:focus-visible {
+    outline: 3px solid #ae355d;
+    outline-offset: 3px;
+}
+
+.favorit-notifikasi {
+    margin: 0 0 24px;
+    padding: 14px 18px;
+    border: 1px solid #edc1d1;
+    border-radius: 12px;
+    background: #fff0f5;
+    color: #842745;
+}
