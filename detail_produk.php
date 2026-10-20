@@ -32,7 +32,7 @@ if (!$barang) {
 }
 
 $stmtVarian = $koneksi->prepare("
-    SELECT v.warna, v.stok, u.nama_ukuran
+    SELECT v.id_varian, v.warna, v.stok, u.nama_ukuran
     FROM varian_barang AS v
     JOIN ukuran_barang AS u ON u.id_ukuran = v.id_ukuran
     WHERE v.id_barang = ?
@@ -55,6 +55,12 @@ $stmtFoto->execute();
 $fotoProduk = $stmtFoto->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $totalStok = array_sum(array_column($varian, "stok"));
+if (empty($_SESSION['csrf_keranjang'])) {
+    $_SESSION['csrf_keranjang'] = bin2hex(random_bytes(32));
+}
+
+$pesanKeranjang = $_SESSION['pesan_keranjang'] ?? '';
+unset($_SESSION['pesan_keranjang']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -88,6 +94,12 @@ $totalStok = array_sum(array_column($varian, "stok"));
                 <a href="katalog.php">Katalog</a>
                 <a href="index.php#tentang">Tentang Kami</a>
 
+                <?php if (
+                !empty($_SESSION['id_user'])
+                && ($_SESSION['role'] ?? '') === 'customer'
+            ): ?>
+                <a href="keranjang.php">Keranjang</a>
+                <?php endif; ?>
                 <?php require __DIR__ . '/menu_akun.php'; ?>
             </nav>
         </div>
@@ -151,6 +163,159 @@ $totalStok = array_sum(array_column($varian, "stok"));
                     <?= nl2br(aman($barang["deskripsi"])) ?>
                 </div>
 
+                <div class="form-keranjang" id="form-keranjang">
+                    <?php if ($pesanKeranjang !== ''): ?>
+                <p role="status" class="pesan-keranjang">
+                    <?= aman($pesanKeranjang) ?>
+                </p>
+                    <?php endif; ?>
+
+                    <?php if ($totalStok > 0): ?>
+                    <?php if (empty($_SESSION['id_user'])): ?>
+                <p>
+                <a href="login.php">Masuk</a>
+                    untuk menambahkan barang ke keranjang.
+                </p>
+                <?php elseif (($_SESSION['role'] ?? '') === 'customer'): ?>
+                <h2>Tambahkan ke Keranjang</h2>
+
+                <form action="tambah_keranjang.php" method="post">
+                <input
+                    type="hidden"
+                    name="csrf_keranjang"
+                    value="<?= aman($_SESSION['csrf_keranjang']) ?>"
+                >
+
+                <input
+                    type="hidden"
+                    name="id_barang"
+                    value="<?= (int) $barang['id_barang'] ?>"
+                >
+
+                <label for="pilihan-varian">Ukuran dan warna</label>
+
+                <select
+                    name="id_varian"
+                    id="pilihan-varian"
+                    required
+                >
+                    <option value="">Pilih ukuran dan warna</option>
+
+                    <?php foreach ($varian as $pilihan): ?>
+                        <?php if ((int) $pilihan['stok'] > 0): ?>
+                            <option
+                                value="<?= (int) $pilihan['id_varian'] ?>"
+                                data-stok="<?= (int) $pilihan['stok'] ?>"
+                            >
+                                <?= aman($pilihan['nama_ukuran']) ?>
+                                — <?= aman($pilihan['warna']) ?>
+                                (stok <?= (int) $pilihan['stok'] ?> pcs)
+                            </option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </select>
+
+                <label for="jumlah-barang">Jumlah</label>
+
+                <input
+                    type="number"
+                    name="jumlah"
+                    id="jumlah-barang"
+                    min="1"
+                    step="1"
+                    value="1"
+                    required
+                >
+
+                <button type="submit" class="tombol-keranjang">
+                    Tambah ke Keranjang
+                </button>
+                </form>
+                    <?php else: ?>
+                <p>Gunakan akun customer untuk berbelanja.</p>
+                    <?php endif; ?>
+                    <?php else: ?>
+                <p>Produk ini sedang habis.</p>
+                    <?php endif; ?>
+                </div>
+
+                <style>
+                .form-keranjang {
+                margin: 28px 0;
+                padding: 24px;
+                background: #fff7fa;
+                border: 1px solid #efd2dd;
+                border-radius: 16px;
+            }
+
+                .form-keranjang form {
+                display: grid;
+                gap: 12px;
+                }
+
+               .form-keranjang label {
+                font-weight: 500;
+            }
+
+               .form-keranjang select,
+               .form-keranjang input[type="number"] {
+                box-sizing: border-box;
+                width: 100%;
+                min-width: 0;
+                padding: 12px;
+                border: 1px solid #dcb9c7;
+                border-radius: 8px;
+                background: white;
+                color: #252025;
+                font: inherit;
+            }
+
+               .tombol-keranjang {
+               margin-top: 8px;
+               padding: 14px 20px;
+               border: 0;
+               border-radius: 8px;
+               background: #a8315b;
+               color: white;
+               font: inherit;
+               font-weight: 600;
+               cursor: pointer;
+            }
+
+              .tombol-keranjang:hover {
+              background: #882648;
+            }
+
+              .pesan-keranjang {
+               margin-bottom: 16px;
+               padding: 12px;
+               border-left: 4px solid #a8315b;
+               background: white;
+               color: #68223c;
+            }
+    </style>
+
+    <script>
+        const pilihanVarian = document.getElementById('pilihan-varian');
+        const jumlahBarang = document.getElementById('jumlah-barang');
+
+        if (pilihanVarian && jumlahBarang) {
+            pilihanVarian.addEventListener('change', function () {
+            const opsi = this.options[this.selectedIndex];
+            const stok = Number(opsi.dataset.stok || 0);
+
+            if (stok > 0) {
+                jumlahBarang.max = String(stok);
+
+                if (Number(jumlahBarang.value) > stok) {
+                    jumlahBarang.value = String(stok);
+                }
+            } else {
+                jumlahBarang.removeAttribute('max');
+            }
+                });
+            }
+    </script>
                 <h2>Pilihan Ukuran dan Warna</h2>
 
                 <?php if ($varian): ?>

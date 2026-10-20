@@ -89,6 +89,12 @@ $jumlahProduk = (int) $koneksi->query("
                 <a href="katalog.php">Katalog</a>
                 <a href="#tentang">Tentang Kami</a>
 
+                <?php if (
+                !empty($_SESSION['id_user'])
+                && ($_SESSION['role'] ?? '') === 'customer'
+            ): ?>
+                <a href="keranjang.php">Keranjang</a>
+                <?php endif; ?>
                 <?php require __DIR__ . '/menu_akun.php'; ?>
             </nav>
         </div>
@@ -264,7 +270,23 @@ $jumlahProduk = (int) $koneksi->query("
                     RT.001/RW.005, Babakan, Kec. Tangerang,<br>
                     Tangerang, Banten 15117.
                 </p>
+                <p>
+                    <strong>Instagram:</strong>
+                    <a
+                        href="https://www.instagram.com/cl_colleqtion/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        @cl_colleqtion
+                    </a>
+                </p>
 
+                <p>
+                    <strong>Telepon:</strong>
+                    <a href="tel:+6281289090792">
+                        +62 812-8909-0792
+                    </a>
+                </p>
                 <a
                 class="tautan-peta"
                 href="https://www.google.com/maps/search/?api=1&amp;query=CL+Collection+TangCity+Mall+Lantai+UG+Blok+B+76+Tangerang"

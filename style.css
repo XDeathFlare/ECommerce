@@ -967,3 +967,56 @@ select {
     flex-wrap: wrap;
     align-items: center;
 }
+/* Background bagian Tentang Kami */
+#tentang {
+    background-color: #f8e9ed;
+    background-image:
+        linear-gradient(
+            to right,
+            rgba(255, 248, 250, 0.97) 0%,
+            rgba(255, 248, 250, 0.90) 35%,
+            rgba(255, 248, 250, 0.25) 60%,
+            rgba(255, 248, 250, 0) 100%
+        ),
+        url("assets/images/bckgrnd_bawah_cl_collection.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-top: 70px;
+    padding-bottom: 70px;
+    scroll-margin-top: 120px;
+}
+
+#tentang h2,
+#tentang h3 {
+    color: #a8315b;
+}
+
+@media (max-width: 768px) {
+    #tentang {
+        background-position: 65% center;
+        background-image:
+            linear-gradient(
+                rgba(255, 248, 250, 0.90),
+                rgba(255, 248, 250, 0.90)
+            ),
+            url("assets/images/bckgrnd_bawah_cl_collection.png");
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+}
+/* Batasi teks agar tidak menimpa foto */
+#tentang h2 {
+    max-width: 560px;
+}
+
+#tentang p {
+    max-width: 540px;
+}
+
+@media (max-width: 768px) {
+    #tentang h2,
+    #tentang p {
+        max-width: 100%;
+    }
+}
