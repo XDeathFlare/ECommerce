@@ -58,6 +58,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deskripsi = inputBarang('deskripsi');
     $jualTeks = inputBarang('harga_jual');
     $beliTeks = inputBarang('harga_beli');
+    $beratTeks = inputBarang('berat_gram');
+
+    $berat = $beratTeks === ''
+        ? null
+        : filter_var(
+            $beratTeks,
+            FILTER_VALIDATE_INT,
+            ['options' => [
+                'min_range' => 1,
+                'max_range' => 2147483647
+            ]]
+        );
     $aktifTeks = inputBarang('aktif');
     $stokInput = $_POST['stok'] ?? [];
 
@@ -79,6 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         (float) $beliTeks > 1000000000
     ) {
         $pesan = 'Harga harus berupa angka 0–1.000.000.000 tanpa pemisah ribuan.';
+    } elseif ($beratTeks !== '' && $berat === false) {
+    $pesan = 'Berat harus berupa bilangan bulat positif dalam gram, atau dikosongkan jika belum diketahui.';
     } elseif (!in_array($aktifTeks, ['0', '1'], true)) {
         $pesan = 'Status barang tidak valid.';
     } elseif (!is_array($stokInput)) {
@@ -140,19 +154,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $ubah = $koneksi->prepare(
                 "UPDATE barang
-                 SET nama_barang = ?, deskripsi = ?,
-                     harga_jual = ?, harga_beli = ?, aktif = ?
-                 WHERE id_barang = ?"
+                SET nama_barang = ?, deskripsi = ?,
+                    harga_jual = ?, harga_beli = ?,
+                    aktif = ?, berat_gram = ?
+                WHERE id_barang = ?"
             );
+
             $ubah->bind_param(
-                'ssddii',
+                'ssddiii',
                 $nama,
                 $deskripsi,
                 $jual,
                 $beli,
                 $aktif,
+                $berat,
                 $idPost
             );
+
             $ubah->execute();
 
             $ubahStok = $koneksi->prepare(
@@ -227,6 +245,7 @@ if ($pesan !== '' && $barang && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $barang['deskripsi'] = $deskripsi;
     $barang['harga_jual'] = $jualTeks;
     $barang['harga_beli'] = $beliTeks;
+    $barang['berat_gram'] = $beratTeks;
     $barang['aktif'] = $aktifTeks;
 }
 
@@ -532,7 +551,28 @@ $semuaBarang = $daftar->get_result();
                             rows="6"
                         ><?= hBarang($barang['deskripsi']) ?></textarea>
                     </div>
+                    <div>
+                        <label for="berat_gram">
+                            Berat pengiriman per barang (gram)
+                        </label>
 
+                        <input
+                            id="berat_gram"
+                            name="berat_gram"
+                            type="number"
+                            min="1"
+                            max="2147483647"
+                            step="1"
+                            placeholder="Belum diketahui"
+                            value="<?= hBarang($barang['berat_gram'] ?? '') ?>"
+                            aria-describedby="catatan-berat"
+                        >
+
+                        <p class="kb-catatan" id="catatan-berat">
+                            Isi berat satu barang termasuk kemasannya dalam gram.
+                            Kosongkan jika belum ditimbang.
+                        </p>
+                    </div>
                     <div>
                         <label for="aktif">Status Barang</label>
                         <select id="aktif" name="aktif">
